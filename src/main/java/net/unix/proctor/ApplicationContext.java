@@ -5,10 +5,10 @@ package net.unix.proctor;
  * @since 01.10.2020
  */
 
-public class ApplicationContext
-{
+public class ApplicationContext {
+
     public static void main(String... args) throws Throwable {
-        new Proctor()
-                .onStart();
+        new Proctor().onStart();
     }
+
 }
