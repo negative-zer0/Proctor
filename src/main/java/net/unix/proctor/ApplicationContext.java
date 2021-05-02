@@ -8,7 +8,8 @@ package net.unix.proctor;
 public class ApplicationContext {
 
     public static void main(String... args) throws Throwable {
-        new Proctor().onStart();
+        new Proctor()
+                .onStart();
     }
 
 }

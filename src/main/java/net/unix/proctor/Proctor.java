@@ -1,5 +1,6 @@
 package net.unix.proctor;
 
+import net.unix.proctor.util.ConditionsUtil;
 import net.unix.proctor.util.Pair;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -20,18 +21,13 @@ public class Proctor {
 
     public void onStart() throws Throwable {
         final File file = new File("images");
-
-        if (!file.exists() && file.mkdirs()) {
-            throw new UnsupportedOperationException("Created images file. Put images with name 1 and 2 with format .jpg in folder images");
-        }
+        ConditionsUtil.check(!file.exists() && file.mkdirs(), () -> { throw new UnsupportedOperationException("Created images file. Put images with name 1 and 2 with format .jpg in folder images"); });
 
         final Pair<BufferedImage, BufferedImage> pair = new Pair<>(ImageIO.read(new File("images/1.jpg")), ImageIO.read(new File("images/2.jpg")));
         final Pair<Integer, Integer> width = new Pair<>(pair.getFirst().getWidth(), pair.getSecond().getWidth()),
                 height = new Pair<>(pair.getFirst().getHeight(), pair.getSecond().getHeight());
 
-        if (!width.getFirst().equals(width.getSecond()) && !height.getFirst().equals(height.getSecond())) {
-            throw new UnsupportedOperationException("Both images should have same dimensions");
-        }
+        ConditionsUtil.check(!width.getFirst().equals(width.getSecond()) && !height.getFirst().equals(height.getSecond()), () -> { throw new UnsupportedOperationException("Both images should have same dimensions"); });
 
         final AtomicLong diff = new AtomicLong();
         IntStream.range(0, height.getFirst()).forEachOrdered(i -> IntStream.range(0, width.getFirst())
@@ -44,8 +40,12 @@ public class Proctor {
 
         final double average = diff.get() / (width.getFirst() * height.getSecond() * 3.0D);
         final double percentage = (average / 255.0D) * 100.0D;
-        System.out.println("Average: " + decimalFormat.format(average));
-        System.out.println("Diffrence: " + decimalFormat.format(percentage) + "%");
+        println("Average: %s", decimalFormat.format(average));
+        println("Difference: %s%%", decimalFormat.format(percentage));
+    }
+
+    private void println(String text, Object... format) {
+        System.out.printf(text + "\n", format);
     }
 
 }
